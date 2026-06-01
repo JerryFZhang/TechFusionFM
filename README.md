@@ -1,39 +1,37 @@
 # TechFusionFM
-[![HitCount](http://hits.dwyl.io/techfusionfm/techfusionfm.svg)](http://hits.dwyl.io/techfusionfm/techfusionfm)
 
-Podcast hosting and feed generation website for TechFusionFM.com. Based on [Hexo](https://hexo.io), and theme [Anatole](https://github.com/hi-caicai/farbox-theme-Anatole). 
+Podcast hosting and feed generation site for [TechFusionFM.com](https://TechFusionFM.com) — 《科技聚变》, a Chinese-language podcast about the internet and the people who make it.
 
-The website is the exact the same as deployed to https://TechFusionFM.com but static.
+## Status
 
-### Deployment
-1. Make sure you have npm, 
-2. Make sure you have apache2 in ```/var/www/html/``` 
-3. Make sure apache2 is active, by typing these in the terminal: ```sudo service apache2 status.```
-  3.1 If not active type these in the terminal: ```sudo service apache2 start.``` and check again
-  3.2 If active, proceed to the next step
-4. Make sure there's nothing you want to keep in ```/var/www/html/```, since the next step will wipe the ```/var/www/html/``` folder.
-5. Install dependencies
-```
-$ cd TechFusionFM/
-$ npm install
-```
-6. Deploy
-```
-$ sh autodep.sh
+The show is rebooting. This repo is the working tree for the redesign and rewrite — see [PLAN.md](./PLAN.md) for the phased plan.
+
+The currently-deployed site is a static build of this repo's `master` branch (Hexo 3.8 + a customized [Anatole](https://github.com/hi-caicai/farbox-theme-Anatole) theme). The reboot will modernize both the stack and the design; until then, `master` reflects production.
+
+## Local development
+
+> The current build chain is pinned to Hexo 3.8 and the deprecated `hexo-renderer-jade`. It does not install cleanly on modern Node. Stack modernization is Phase 2 — until then, build on Node 10 or use the archived deploy box.
+
+```sh
+npm install
+npx hexo generate   # outputs to ./public
+npx hexo server     # local preview on :4000
 ```
 
-### Author
-CMS:       [Hexo](https://hexo.io)
+## Deployment
 
-Theme Based on:  [Anatole](https://github.com/hi-caicai/farbox-theme-Anatole)
+Production today is a self-hosted Apache 2 box; `autodep.sh` rsyncs `public/` into `/var/www/html/`. Hosting is being re-evaluated as part of the reboot.
 
-Telegram Bot, Custom Deployment Script, Show Notes, Custom XML Parser and Theme Customization: [Jerry Fengwei Zhang - JerryFZhang](https://github.com/JerryFZhang)
+## Credits
 
+- CMS: [Hexo](https://hexo.io)
+- Theme (current): based on [Anatole](https://github.com/hi-caicai/farbox-theme-Anatole)
+- Telegram bot, custom deployment script, show notes, custom XML parser, theme customization: [Jerry Fengwei Zhang](https://github.com/JerryFZhang)
 
-The content including but not limited to text displayed on the website, pictures and logos, audio files, [TechFusionFM.com](https://TechFusionFM.com) have exclusive right to them unless authorized. 
+## License
 
-### License
+[Creative Commons 4.0 BY-NC-ND](https://creativecommons.org/licenses/by-nc-nd/4.0/) for everything under `source/`; MIT for the rest.
 
-[Creative Commons 4.0 BY-NC-ND](https://creativecommons.org/licenses/by-nc-nd/4.0/) for all files under /source/,	MIT for all other contents and code. 
+All textual content, images, logos, and audio on [TechFusionFM.com](https://TechFusionFM.com) are exclusively owned by TechFusionFM.com unless otherwise authorized.
 
-<a rel="license" href="http://creativecommons.org/licenses/by-nc-nd/4.0/"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by-nc-nd/4.0/88x31.png" /></a><br />This work is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-nc-nd/4.0/">Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International License</a>.
+<a rel="license" href="http://creativecommons.org/licenses/by-nc-nd/4.0/"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by-nc-nd/4.0/88x31.png" /></a>
