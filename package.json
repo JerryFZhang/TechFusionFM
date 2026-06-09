@@ -2,6 +2,9 @@
   "name": "hexo-site",
   "version": "0.0.0",
   "private": true,
+  "engines": {
+    "node": ">=22 <23"
+  },
   "hexo": {
     "version": "3.8.0"
   },
@@ -22,7 +25,6 @@
     "hexo-renderer-jade": "^0.3.0",
     "hexo-renderer-marked": "^0.2.10",
     "hexo-renderer-stylus": "^0.3.1",
-    "hexo-server": "^0.2.0",
-    "npm": "^6.13.4"
+    "hexo-server": "^0.2.0"
   }
 }
