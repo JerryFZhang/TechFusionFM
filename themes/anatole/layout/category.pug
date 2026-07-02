@@ -10,10 +10,7 @@ block site_title
 
 block content
 	.autopagerize_page_element: .content
-		- page.posts.each(function (item, index) {	
-				if item.categories == page.category
-					index--
-					include mixins
-				+make_post(item,  page.posts.length - index, false)
-		- })
 		include mixins
+		- page.posts.each(function (item, index) {
+			+make_post(item,  page.posts.length - index, false)
+		- })

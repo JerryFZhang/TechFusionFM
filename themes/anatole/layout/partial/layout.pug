@@ -1,4 +1,4 @@
-doctype
+doctype html
 html(lang="zh-CN")
 	head
 		include head
@@ -9,15 +9,15 @@ html(lang="zh-CN")
 		if (page.category == "spotlight")
 			include sidebar-spotlight
 		if (page.category == "gadgets")
-			include sidebar-gadgets	
+			include sidebar-gadgets
 		if (!(page.category == "gadgets" || page.category == "spotlight"))
-			include sidebar	
-		
+			include sidebar
+
 		block content
-		
+
 		script(src= url_for('js/jquery.js'))
 		script(src= url_for('js/jquery-migrate-1.2.1.min.js'))
 		script(src= url_for('js/jquery.appear.js'))
-		
+
 
 

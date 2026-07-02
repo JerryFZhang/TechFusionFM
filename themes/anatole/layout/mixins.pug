@@ -3,9 +3,9 @@ mixin make_post(item, index, is_detail)
 		.post-title
 			h3
 				if index
-					-var episodeNum = "#" + index + ": "
+					- var episodeNum = "#" + index + ": "
 				if !index
-					-var episodeNum = ""
+					- var episodeNum = ""
 				if is_detail
 					a= episodeNum + item.title
 				else
