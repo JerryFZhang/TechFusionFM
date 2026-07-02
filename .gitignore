@@ -5,6 +5,7 @@ db.json
 *.log
 .deploy*/
 node_modules/
+vendor/*/node_modules/
 source/audio/1.mp3
 source/audio/2.mp3
 source/audio/22.mp3
