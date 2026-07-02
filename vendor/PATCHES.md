@@ -64,8 +64,8 @@ any iTunes namespace tag.
 and `<a class="headerlink">` markup if we drop to upstream). That is a Phase 2
 HTML parity concern, not a feed concern; the spec explicitly allows whitespace
 and minor markup diffs in sampled post HTML, but adding extra anchor elements
-inside every `<h1>…<h6>` is a structural change that would show up across the
-whole site.
+inside every heading element (h1 through h6) is a structural change that would
+show up across the whole site.
 
 ### Recommendation: **(b) move to `vendor/hexo-renderer-marked/` and depend via `file:`**
 
