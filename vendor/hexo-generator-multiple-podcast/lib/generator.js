@@ -82,7 +82,12 @@ module.exports = function (locals) {
         return {
           title:"#" + episode + ": " + post.title,
           date: post.date,
-          permalink: post.permalink,
+          // Hexo >= 5 normalizes post.permalink through WHATWG URL, which
+          // lowercases the host (TechFusionFM.com -> techfusionfm.com).
+          // Feed <guid>s are opaque case-sensitive strings, so rebuild the
+          // permalink the way Hexo 3 did to keep every published GUID
+          // byte-identical. See vendor/PATCHES.md §2.
+          permalink: config.url + config.root + post.path,
           content_encoded,
           subtitle: post.subtitle || '',
           author: post.author || config.author,

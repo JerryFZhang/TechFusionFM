@@ -172,6 +172,25 @@ None of these change `<guid>` or `<enclosure url>`, so subscriber identity is
 preserved — but episode list rendering in every podcast client would shift
 visibly, which violates §3 ("no observable change for listeners").
 
+#### `lib/generator.js` — Phase 2 addition: permalink/GUID case pin
+
+Added during the Hexo 3 → 7 migration (not part of the original 2019 patch
+set). Hexo ≥ 5 computes `post.permalink` via `full_url_for`, which runs the
+URL through the WHATWG `URL` parser and therefore lowercases the host:
+`https://TechFusionFM.com/45/` became `https://techfusionfm.com/45/`. The
+feed template uses `episode.permalink` for both `<link>` and `<guid>`, and
+RSS `<guid>`s are opaque case-sensitive strings — every published episode
+would have re-appeared as new in podcast clients. The patch rebuilds the
+permalink the way Hexo 3 did:
+
+```diff
+-          permalink: post.permalink,
++          permalink: config.url + config.root + post.path,
+```
+
+Verified byte-identical `<guid>` and `<link>` values against
+`backup-rss.xml` (the production feed snapshot).
+
 ### Recommendation: **(b) move to `vendor/hexo-generator-multiple-podcast/` and depend via `file:`**
 
 Rationale:
