@@ -43,6 +43,28 @@ ViewDNS summary verbatim: "All servers were able to reach your site. This means 
 
 **Owner action:** run an HTTP-level test (ITDOG or a contact on the ground) against `https://TechFusionFM.com/` and one representative `/audio/*.mp3` file, ideally on China Telecom + China Unicom + China Mobile, once off-peak and once during the 20:00–23:00 Beijing-time peak.
 
+### ⚠️ Update 2026-07-09 — HTTP-level test run; the apex is down for all strict-TLS clients
+
+The HTTP-level check above was run (from a US vantage, not mainland). It does not measure the GFW, because it never gets that far: **the apex TLS certificate expired on 2023-04-17** — 1,179 days ago.
+
+| Check | Result |
+|---|---|
+| `openssl x509 -checkend 0` | fails — **expired** `notAfter=Apr 17 06:02:02 2023 GMT` |
+| Chain validation | `Verify return code: 21 (unable to verify the first certificate)`; issuer `Let's Encrypt R3` (retired) |
+| SAN | absent (CN-only cert, `CN=techfusionfm.com`) |
+| `https://TechFusionFM.com/`, `/podcast.xml`, `/audio/45.mp3` (strict TLS) | `000`, `000`, `000` |
+| same three with `curl -k` | `200`, `200`, `206` (Range works; bytes intact) |
+| `http://TechFusionFM.com/podcast.xml` | `301` → `https://…` — no plaintext fallback |
+
+Apple Podcasts, Overcast, Pocket Casts and 小宇宙 all validate TLS, so **no conforming podcast client has been able to fetch this feed since 2023-04-17.**
+
+Consequences for this document:
+- The §6.1 mainland-reachability question is **moot until the cert is fixed**. Any mainland test run before then measures the expired cert, not the GFW.
+- The §6.2/§6.3 owner actions should be **re-sequenced after** the cert fix, not before.
+- This is independent of hosting topology and of the site's SSG. Remediation: `certbot --nginx` on the existing Linode box, then confirm the auto-renew timer. See [`docs/hosting.md`](../docs/hosting.md) §0.
+
+**Confidence: HIGH** — directly measured, reproducible with the commands above.
+
 ---
 
 ## §6.2 Latency / loss to candidate POPs from mainland
@@ -118,9 +140,10 @@ ViewDNS summary verbatim: "All servers were able to reach your site. This means 
 
 | # | Input (feeds spec §7 matrix) | Status |
 |---|---|---|
+| 0 | **Apex serves valid TLS** | 🚨 **BLOCKING — cert expired 2023-04-17.** Fix before collecting #3/#4; see §6.1 update |
 | 1 | Apex resolves un-poisoned from mainland (DNS level) | ✅ Ready — 5/5 vantage points, verified 2026-07-02 |
 | 2 | Origin identity confirmed (Linode Tokyo, no CDN in front) | ✅ Ready |
-| 3 | HTTP-level mainland reachability of apex + audio | ❌ Not ready — **Owner action:** ITDOG/on-the-ground test (§6.1) |
+| 3 | HTTP-level mainland reachability of apex + audio | ❌ Not ready — **blocked by #0**; any test before the cert fix measures the cert, not the GFW |
 | 4 | Site-specific mainland latency/loss to candidate POPs | ❌ Not ready — only secondary benchmarks collected; **Owner action:** §6.2 vantage tests |
 | 5 | Qualitative POP picture (Cloudflare non-Ent → US West; Vercel degraded; 163-backbone peak congestion) | ✅ Ready (medium confidence, secondary sources) |
 | 6 | **Audience split mainland/diaspora** — the §7 pivot number | ❌ Not ready — **Owner action:** 4 dashboards (§6.3). *Biggest blocker.* |
@@ -128,3 +151,5 @@ ViewDNS summary verbatim: "All servers were able to reach your site. This means 
 | 8 | Mainland-mirror-with-offshore-enclosures legality (podcast-specific) | ⚠️ Partial — general principle OK, podcast/AVSP question open; **Owner action:** paid consult only if triggered |
 
 **Bottom line:** the §7 decision cannot responsibly be made yet. Blocking items are #6 (audience split — owner dashboards, ~30 min) and #3/#4 (mainland HTTP + latency tests, ~1 hour). Everything else is collected.
+
+**But #0 outranks all of them.** The apex has served an expired certificate since 2023-04-17, so the show is currently unreachable to every strict-TLS podcast client. Fixing that is a `certbot` run, costs nothing, changes no URL or GUID, and is a prerequisite for #3 and #4 producing meaningful numbers. Do it before anything else in this document.
