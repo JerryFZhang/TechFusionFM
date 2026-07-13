@@ -29,9 +29,16 @@ Spec: `specs/phase-2-stack-modernization.md`. Decision: stay on Hexo (7.x) rathe
 
 Remaining before merge: owner spot-check of rendered pages; production-feed diff at merge time.
 
-## Phase 3 — Design refresh
+## Phase 3 — Design refresh (direction proposed)
 
-Pinned. Separate exercise underway for visual style.
+Spec: `specs/phase-3-design.md`. Mockup: `design/phase-3-direction.html` (open in a browser; ◐ toggles light/dark).
+
+Direction: **reactor core** — 聚变 = *fusion*, so hot plasma against a cold void; Chinese-first typography with monospace instrument-panel data; the three feeds (科技聚变 / 聚焦 / 小玩意儿) become a channel switcher. Both themes, reduced-motion-aware, real episode content.
+
+- [x] Visual direction proposed + interactive mockup built (both themes verified)
+- [ ] **Owner action:** sign off on the direction (or request alternates) — see spec §6
+- [ ] Implement as a **restyle of the existing Anatole/Hexo 7 theme** — CSS + light template edits only; feed generator, GUID pin, and all URLs untouched
+- [ ] Re-run feed parity after theme edits (a template change must not alter feed output)
 
 ## Phase 4 — Hosting (options documented, decision blocked on owner data)
 
