@@ -1,0 +1,447 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>科技聚变 · Phase 3 设计方向</title>
+<style>
+  :root{
+    /* palette — reactor core: hot plasma against cold void */
+    --core:#FF3B5C;        /* plasma accent, primary */
+    --core-2:#FFB13C;      /* amber — fuses with core, hero mark only */
+    --focus-hue:#FFB13C;   /* 聚焦 channel marker */
+    --gadget-hue:#33E1CE;  /* 小玩意儿 channel marker */
+
+    /* neutrals, cool-biased toward the void (chosen against the hot accent) */
+    --ink:#0A0C12;
+    --panel:#11141E;
+    --panel-2:#161A26;
+    --line:rgba(158,170,200,.16);
+    --text:#EAEDF6;
+    --text-dim:#99A2B8;
+    --text-faint:#5C6580;
+    --bg:#0A0C12;
+    --card:#11141E;
+    --card-hi:#161B28;
+
+    --radius:14px;
+    --maxw:1180px;
+    --mono:ui-monospace,"SF Mono","JetBrains Mono","Roboto Mono",Menlo,monospace;
+    --han:"PingFang SC","Hiragino Sans GB","Noto Sans SC","Microsoft YaHei",system-ui,sans-serif;
+    --shadow:0 24px 60px -28px rgba(0,0,0,.7);
+  }
+  /* light theme tokens */
+  @media (prefers-color-scheme:light){
+    :root{
+      --ink:#0B0D14; --panel:#FFFFFF; --panel-2:#F2F4F9;
+      --line:rgba(20,30,60,.12);
+      --text:#12151F; --text-dim:#54607A; --text-faint:#8B94AC;
+      --bg:#EDEFF5; --card:#FFFFFF; --card-hi:#F5F7FB;
+      --shadow:0 24px 60px -34px rgba(30,40,70,.35);
+    }
+  }
+  :root[data-theme="dark"]{
+    --ink:#0A0C12; --panel:#11141E; --panel-2:#161A26;
+    --line:rgba(158,170,200,.16);
+    --text:#EAEDF6; --text-dim:#99A2B8; --text-faint:#5C6580;
+    --bg:#0A0C12; --card:#11141E; --card-hi:#161B28;
+    --shadow:0 24px 60px -28px rgba(0,0,0,.7);
+  }
+  :root[data-theme="light"]{
+    --ink:#0B0D14; --panel:#FFFFFF; --panel-2:#F2F4F9;
+    --line:rgba(20,30,60,.12);
+    --text:#12151F; --text-dim:#54607A; --text-faint:#8B94AC;
+    --bg:#EDEFF5; --card:#FFFFFF; --card-hi:#F5F7FB;
+    --shadow:0 24px 60px -34px rgba(30,40,70,.35);
+  }
+
+  *{box-sizing:border-box}
+  html{-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+  body{margin:0;background:var(--bg);color:var(--text);font-family:var(--han);
+    font-size:16px;line-height:1.6}
+  a{color:inherit;text-decoration:none}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:0 24px}
+  .mono{font-family:var(--mono);font-variant-numeric:tabular-nums}
+  .eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.22em;
+    text-transform:uppercase;color:var(--text-faint)}
+
+  /* ---- top bar ---- */
+  header.top{position:sticky;top:0;z-index:40;backdrop-filter:blur(14px);
+    background:color-mix(in srgb,var(--bg) 78%,transparent);
+    border-bottom:1px solid var(--line)}
+  .top .wrap{display:flex;align-items:center;gap:20px;height:62px}
+  .brand{display:flex;align-items:center;gap:11px;font-weight:800;letter-spacing:.02em}
+  .brand .dot{width:11px;height:11px;border-radius:50%;
+    background:radial-gradient(circle at 35% 30%,var(--core-2),var(--core) 70%);
+    box-shadow:0 0 14px 1px color-mix(in srgb,var(--core) 60%,transparent)}
+  .top nav{margin-left:auto;display:flex;gap:26px;align-items:center}
+  .top nav a{font-size:14px;color:var(--text-dim);transition:color .15s}
+  .top nav a:hover{color:var(--text)}
+  .tglt{border:1px solid var(--line);background:transparent;color:var(--text-dim);
+    width:36px;height:36px;border-radius:9px;cursor:pointer;font-size:15px;
+    display:grid;place-items:center;transition:.15s}
+  .tglt:hover{color:var(--text);border-color:var(--core)}
+  .subscribe-btn{font-family:var(--mono);font-size:12px;letter-spacing:.08em;
+    text-transform:uppercase;padding:9px 15px;border-radius:9px;
+    background:var(--core);color:#fff;font-weight:600;
+    box-shadow:0 6px 20px -8px var(--core)}
+  @media(max-width:720px){.top nav a.navlink{display:none}}
+
+  /* ---- hero / reactor ---- */
+  .hero{position:relative;overflow:hidden;border-bottom:1px solid var(--line)}
+  #core{position:absolute;inset:0;width:100%;height:100%;display:block}
+  .hero-veil{position:absolute;inset:0;pointer-events:none;
+    background:radial-gradient(120% 90% at 50% -10%,transparent 40%,var(--bg) 92%)}
+  .hero .wrap{position:relative;z-index:2;padding:78px 24px 66px;text-align:center}
+  .status{display:inline-flex;align-items:center;gap:9px;font-family:var(--mono);
+    font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--core-2);
+    border:1px solid color-mix(in srgb,var(--core-2) 40%,var(--line));
+    padding:6px 13px;border-radius:100px;margin-bottom:30px;
+    background:color-mix(in srgb,var(--core-2) 8%,transparent)}
+  .status .pulse{width:7px;height:7px;border-radius:50%;background:var(--core-2);
+    box-shadow:0 0 0 0 color-mix(in srgb,var(--core-2) 70%,transparent);
+    animation:pulse 2.4s infinite}
+  @keyframes pulse{0%{box-shadow:0 0 0 0 color-mix(in srgb,var(--core-2) 60%,transparent)}
+    70%{box-shadow:0 0 0 10px transparent}100%{box-shadow:0 0 0 0 transparent}}
+  .wordmark{font-weight:900;line-height:.94;letter-spacing:.01em;
+    font-size:clamp(58px,12.5vw,150px);margin:0;text-wrap:balance}
+  .wordmark .fuse{background:linear-gradient(105deg,var(--core-2),var(--core) 58%,#ff5f9e);
+    -webkit-background-clip:text;background-clip:text;color:transparent;
+    filter:drop-shadow(0 3px 30px color-mix(in srgb,var(--core) 45%,transparent))}
+  .latin{font-family:var(--mono);font-size:clamp(12px,2.2vw,15px);letter-spacing:.5em;
+    text-transform:uppercase;color:var(--text-dim);margin:20px 0 0;padding-left:.5em}
+  .lede{max-width:38ch;margin:26px auto 0;color:var(--text-dim);
+    font-size:clamp(15px,2.4vw,18px)}
+  .stats{display:flex;justify-content:center;gap:0;margin:40px auto 4px;flex-wrap:wrap}
+  .stat{padding:0 26px;border-right:1px solid var(--line)}
+  .stat:last-child{border-right:0}
+  .stat b{display:block;font-family:var(--mono);font-size:26px;font-weight:700;
+    letter-spacing:-.01em}
+  .stat span{font-size:12px;color:var(--text-faint);letter-spacing:.05em}
+
+  /* ---- featured episode ---- */
+  section{padding:66px 0}
+  .sec-head{display:flex;align-items:baseline;gap:16px;margin-bottom:26px}
+  .sec-head h2{font-size:22px;font-weight:800;margin:0;letter-spacing:.02em}
+  .sec-head .num{font-family:var(--mono);color:var(--text-faint);font-size:13px}
+  .feature{display:grid;grid-template-columns:150px 1fr;gap:28px;align-items:center;
+    background:linear-gradient(180deg,var(--card-hi),var(--card));
+    border:1px solid var(--line);border-radius:var(--radius);padding:26px;
+    box-shadow:var(--shadow);position:relative;overflow:hidden}
+  .feature::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;
+    background:linear-gradient(var(--core),var(--core-2))}
+  .cover{width:150px;height:150px;border-radius:12px;position:relative;
+    background:
+      radial-gradient(circle at 30% 25%,color-mix(in srgb,var(--core-2) 90%,#fff) 0,transparent 40%),
+      radial-gradient(circle at 70% 80%,var(--core) 0,transparent 55%),
+      linear-gradient(135deg,#2a1030,#0c0e18);
+    display:grid;place-items:center;overflow:hidden;
+    box-shadow:inset 0 0 40px -6px rgba(0,0,0,.6)}
+  .cover .k{font-weight:900;font-size:40px;color:#fff;
+    text-shadow:0 2px 20px rgba(0,0,0,.5);letter-spacing:.04em}
+  .cover .ring{position:absolute;width:120%;height:120%;border-radius:50%;
+    border:1px solid rgba(255,255,255,.18)}
+  .cover .ring.r2{width:86%;height:86%;border-color:rgba(255,255,255,.1)}
+  .feat-body{min-width:0}
+  .feat-body .ep{font-family:var(--mono);color:var(--core);font-size:13px;
+    letter-spacing:.06em}
+  .feat-body h3{margin:5px 0 8px;font-size:clamp(20px,3vw,27px);font-weight:800;
+    line-height:1.25;text-wrap:balance}
+  .feat-body p{margin:0 0 18px;color:var(--text-dim);font-size:14.5px;
+    display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+  .player{display:flex;align-items:center;gap:15px}
+  .play{width:50px;height:50px;border-radius:50%;border:0;cursor:pointer;flex:none;
+    background:var(--core);color:#fff;display:grid;place-items:center;
+    box-shadow:0 10px 26px -8px var(--core);transition:transform .12s}
+  .play:hover{transform:scale(1.06)}
+  .play svg{width:19px;height:19px;margin-left:2px}
+  .scrub{flex:1;min-width:0}
+  .track{height:6px;border-radius:100px;background:var(--panel-2);position:relative;
+    overflow:hidden;cursor:pointer}
+  .track .fill{position:absolute;inset:0 66% 0 0;
+    background:linear-gradient(90deg,var(--core-2),var(--core))}
+  .track .head{position:absolute;left:34%;top:50%;width:13px;height:13px;
+    border-radius:50%;background:#fff;transform:translate(-50%,-50%);
+    box-shadow:0 0 0 3px color-mix(in srgb,var(--core) 55%,transparent)}
+  .times{display:flex;justify-content:space-between;margin-top:8px;
+    font-family:var(--mono);font-size:11.5px;color:var(--text-faint)}
+  @media(max-width:640px){.feature{grid-template-columns:1fr;text-align:center}
+    .cover{margin:0 auto}.feature::before{display:none}.player{flex-wrap:wrap}}
+
+  /* ---- channels ---- */
+  .channels{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:26px}
+  .chan{--h:var(--core);display:flex;align-items:center;gap:10px;cursor:pointer;
+    border:1px solid var(--line);background:var(--card);border-radius:100px;
+    padding:10px 17px 10px 13px;transition:.16s;color:var(--text-dim);font-weight:600;
+    font-size:14.5px}
+  .chan .cd{width:9px;height:9px;border-radius:50%;background:var(--h);flex:none;
+    box-shadow:0 0 10px -1px var(--h)}
+  .chan .cn{font-family:var(--mono);font-size:11px;color:var(--text-faint);
+    letter-spacing:.05em}
+  .chan:hover{color:var(--text);border-color:color-mix(in srgb,var(--h) 50%,var(--line))}
+  .chan[aria-selected="true"]{color:var(--text);border-color:var(--h);
+    background:color-mix(in srgb,var(--h) 10%,var(--card))}
+  .chan:focus-visible{outline:2px solid var(--h);outline-offset:2px}
+
+  .list{border-top:1px solid var(--line)}
+  .row{display:grid;grid-template-columns:64px 1fr auto;gap:20px;align-items:center;
+    padding:18px 12px;border-bottom:1px solid var(--line);cursor:pointer;
+    transition:background .14s;position:relative}
+  .row:hover{background:var(--card-hi)}
+  .row .rnum{font-family:var(--mono);font-size:19px;font-weight:700;color:var(--chan-h,var(--core));
+    text-align:center;font-variant-numeric:tabular-nums}
+  .row .rmain{min-width:0}
+  .row .rt{font-weight:700;font-size:16.5px;margin-bottom:3px;
+    white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .row .rs{color:var(--text-dim);font-size:13px;white-space:nowrap;overflow:hidden;
+    text-overflow:ellipsis}
+  .row .rmeta{text-align:right;font-family:var(--mono);font-size:12px;color:var(--text-faint);
+    display:flex;flex-direction:column;gap:3px}
+  .row .rmeta .d{color:var(--text-dim)}
+  .row .rplay{position:absolute;left:12px;width:64px;display:grid;place-items:center;
+    opacity:0;transition:opacity .14s;color:var(--chan-h,var(--core))}
+  .row:hover .rnum{opacity:0}
+  .row:hover .rplay{opacity:1}
+  @media(max-width:600px){.row{grid-template-columns:44px 1fr}
+    .row .rnum,.row .rplay{width:44px;font-size:16px}.row .rmeta{display:none}
+    .row .rs{display:none}}
+
+  /* ---- subscribe ---- */
+  .subwrap{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);
+    padding:38px;text-align:center;box-shadow:var(--shadow)}
+  .subwrap h2{margin:0 0 8px;font-size:24px;font-weight:800}
+  .subwrap p{margin:0 0 26px;color:var(--text-dim)}
+  .apps{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+  .app{display:flex;align-items:center;gap:9px;border:1px solid var(--line);
+    background:var(--card);border-radius:11px;padding:12px 18px;font-weight:600;
+    font-size:14px;transition:.16s}
+  .app:hover{border-color:var(--core);transform:translateY(-2px)}
+  .app .ai{width:20px;height:20px;border-radius:5px;display:grid;place-items:center;
+    font-family:var(--mono);font-size:11px;font-weight:700;color:#fff}
+  .app .u{font-family:var(--mono);font-size:11px;color:var(--text-faint);letter-spacing:.04em}
+
+  footer.site{border-top:1px solid var(--line);padding:34px 0;margin-top:20px}
+  footer.site .wrap{display:flex;align-items:center;gap:16px;flex-wrap:wrap;
+    color:var(--text-faint);font-size:13px}
+  footer.site .mono{font-size:12px}
+  .propose{margin-left:auto;font-family:var(--mono);font-size:11px;letter-spacing:.1em;
+    text-transform:uppercase;color:var(--core);border:1px dashed color-mix(in srgb,var(--core) 45%,var(--line));
+    padding:6px 12px;border-radius:100px}
+
+  @media(prefers-reduced-motion:reduce){
+    .pulse{animation:none}*{scroll-behavior:auto}
+  }
+</style>
+
+</head>
+<body>
+<header class="top">
+  <div class="wrap">
+    <a class="brand" href="#"><span class="dot"></span>科技聚变</a>
+    <nav>
+      <a class="navlink" href="#feed">节目</a>
+      <a class="navlink" href="#channels">频道</a>
+      <a class="navlink" href="#sub">订阅</a>
+      <button class="tglt" id="tgl" aria-label="切换明暗主题" title="切换主题">◐</button>
+      <a class="subscribe-btn" href="#sub">订阅</a>
+    </nav>
+  </div>
+</header>
+
+<div class="hero">
+  <canvas id="core" aria-hidden="true"></canvas>
+  <div class="hero-veil"></div>
+  <div class="wrap">
+    <div class="status"><span class="pulse"></span>重启在即 · Rebooting</div>
+    <h1 class="wordmark">科技<span class="fuse">聚变</span></h1>
+    <p class="latin">TECHFUSION&nbsp;FM</p>
+    <p class="lede">一档关于互联网，以及创造它的人的中文播客。我们谈论有关互联网的一切。</p>
+    <div class="stats">
+      <div class="stat"><b>45</b><span>期正片</span></div>
+      <div class="stat"><b>3</b><span>条频道</span></div>
+      <div class="stat"><b>2016–19</b><span>第一季</span></div>
+    </div>
+  </div>
+</div>
+
+<main class="wrap">
+
+  <section id="feed">
+    <div class="sec-head"><h2>最新一期</h2><span class="num mono">// LATEST</span></div>
+    <article class="feature">
+      <div class="cover">
+        <span class="ring"></span><span class="ring r2"></span>
+        <span class="k">45</span>
+      </div>
+      <div class="feat-body">
+        <div class="ep mono">EP.45 · 2019.02.14 · 01:14:50</div>
+        <h3>科技优先还是产品优先？</h3>
+        <p>《科技聚变》两岁啦！本期节目二位主播从科技产品的价值聊起，讨论了智能手机产业的成熟与转变，同时分享了做节目两年以来的感受。</p>
+        <div class="player">
+          <button class="play" id="playbtn" aria-label="播放">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+          </button>
+          <div class="scrub">
+            <div class="track"><div class="fill"></div><div class="head"></div></div>
+            <div class="times"><span>25:31</span><span>-49:19</span></div>
+          </div>
+        </div>
+      </div>
+    </article>
+  </section>
+
+  <section id="channels">
+    <div class="sec-head"><h2>三条频道</h2><span class="num mono">// CHANNELS</span></div>
+    <div class="channels" role="tablist" aria-label="频道">
+      <button class="chan" role="tab" aria-selected="true" data-feed="podcast"
+        style="--h:var(--core)"><span class="cd"></span>科技聚变<span class="cn">MAIN</span></button>
+      <button class="chan" role="tab" aria-selected="false" data-feed="spotlight"
+        style="--h:var(--focus-hue)"><span class="cd"></span>聚焦<span class="cn">SPOTLIGHT</span></button>
+      <button class="chan" role="tab" aria-selected="false" data-feed="gadgets"
+        style="--h:var(--gadget-hue)"><span class="cd"></span>小玩意儿<span class="cn">GADGETS</span></button>
+    </div>
+    <p id="chan-desc" style="color:var(--text-dim);font-size:14px;margin:-8px 0 22px"></p>
+    <div class="list" id="list"></div>
+  </section>
+
+  <section id="sub">
+    <div class="subwrap">
+      <h2>在任意客户端订阅</h2>
+      <p>同一条 RSS，历史节目一期不丢。你的播客 App 会自动接管。</p>
+      <div class="apps">
+        <a class="app" href="#"><span class="ai" style="background:#9933CC">A</span>Apple Podcasts</a>
+        <a class="app" href="#"><span class="ai" style="background:#FA9D3B">小</span>小宇宙</a>
+        <a class="app" href="#"><span class="ai" style="background:var(--core)">R</span>RSS<span class="u">podcast.xml</span></a>
+        <a class="app" href="#"><span class="ai" style="background:#1DB954">S</span>Spotify</a>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="site">
+  <div class="wrap">
+    <span class="brand"><span class="dot"></span>科技聚变</span>
+    <span class="mono">TechFusionFM.com · since 2016</span>
+    <span class="propose">设计方向提案 · Phase 3 mockup</span>
+  </div>
+</footer>
+
+<script>
+(function(){
+  // ---- theme toggle (overrides prefers-color-scheme in both directions) ----
+  var root=document.documentElement, btn=document.getElementById('tgl');
+  btn.addEventListener('click',function(){
+    var cur=root.getAttribute('data-theme');
+    if(!cur){cur=matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light';}
+    root.setAttribute('data-theme',cur==='dark'?'light':'dark');
+  });
+
+  // ---- fake play state on featured ----
+  var pb=document.getElementById('playbtn');
+  pb.addEventListener('click',function(){
+    var playing=pb.getAttribute('data-playing')==='1';
+    pb.setAttribute('data-playing',playing?'0':'1');
+    pb.innerHTML=playing
+      ?'<svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>'
+      :'<svg viewBox="0 0 24 24" fill="currentColor"><path d="M6 5h4v14H6zM14 5h4v14h-4z"/></svg>';
+  });
+
+  // ---- channel data (real episodes) ----
+  var DATA={
+    podcast:{h:'var(--core)',desc:'谈论有关互联网的一切 —— 科技、产品、以及背后的人。',eps:[
+      ['45','科技优先还是产品优先？','两位主播从科技产品的价值聊起','2019.02.14','01:14:50'],
+      ['44','「大螺丝刀」和「小工具箱」','iPad Pro 与 Mac 的对比是否公平','2018.11.10','01:25:23'],
+      ['43','更好和最好','iPhone XS 与 XR 之间的取舍','2018.10.24','01:06:43'],
+      ['42','「拿妥协当卖点」','当智能手机不可避免地「撞脸」','2018.09.12','01:50:18'],
+      ['41','不再专业的 MacBook Pro ？','2018 款 MacBook Pro 引出的一连串问题','2018.08.13','01:30:30'],
+      ['40','「缝缝补补又一年」','WWDC 2018 之后的深度分析','2018.07.03','01:30:30']
+    ]},
+    spotlight:{h:'var(--focus-hue)',desc:'《聚焦》—— 我们聊，且只聊一件事。',eps:[
+      ['12','「大螺丝刀」和「小工具箱」','工具只是用来完成工作的器具','2018.11.10','01:25:23'],
+      ['11','更好和最好','对产品发布会的本能反应','2018.10.24','01:06:43'],
+      ['10','不再专业的 MacBook Pro ？','挑剔的专业用户依然不满','2018.08.13','01:30:30'],
+      ['9','「缝缝补补又一年」','macOS 软件「iOS 化」的进程','2018.07.03','01:30:30'],
+      ['8','站在科技和权利的十字路口','Facebook 8700 万用户数据事件','2018.04.19','01:27:32']
+    ]},
+    gadgets:{h:'var(--gadget-hue)',desc:'《小玩意儿》—— 近期以及展会上的新鲜数码好物。',eps:[
+      ['4','「拿妥协当卖点」','当形式不再追随功能','2018.09.12','01:50:18'],
+      ['3','小米 MIX 2S 和华为 P20 Pro','Dean 考虑转战安卓阵营的原因','2018.05.13','00:29:43'],
+      ['2','《小玩意儿》（Gadgets）','CES 上发布的新品','2018.03.14','00:42:14'],
+      ['1','手机界「新年」前的狂欢','秋天堪比智能手机界的新年','2017.09.04','00:34:57']
+    ]}
+  };
+  var list=document.getElementById('list'), desc=document.getElementById('chan-desc');
+  function render(feed){
+    var d=DATA[feed]; list.style.setProperty('--chan-h',d.h);
+    desc.textContent=d.desc;
+    list.innerHTML=d.eps.map(function(e){
+      return '<div class="row" tabindex="0">'
+        +'<div class="rnum">'+e[0]+'</div>'
+        +'<div class="rplay"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></div>'
+        +'<div class="rmain"><div class="rt">'+e[1]+'</div><div class="rs">'+e[2]+'</div></div>'
+        +'<div class="rmeta"><span class="d">'+e[3]+'</span><span>'+e[4]+'</span></div>'
+        +'</div>';
+    }).join('');
+  }
+  var tabs=[].slice.call(document.querySelectorAll('.chan'));
+  tabs.forEach(function(t){
+    t.addEventListener('click',function(){
+      tabs.forEach(function(x){x.setAttribute('aria-selected','false')});
+      t.setAttribute('aria-selected','true');
+      render(t.dataset.feed);
+    });
+  });
+  render('podcast');
+
+  // ---- reactor core: particles converge to a glowing core ----
+  var cv=document.getElementById('core'), ctx=cv.getContext('2d');
+  var reduce=matchMedia('(prefers-reduced-motion:reduce)').matches;
+  var W,H,DPR,parts=[],cx,cy;
+  function hot(){ // read accent from CSS so it tracks theme
+    return getComputedStyle(root).getPropertyValue('--core').trim()||'#FF3B5C';
+  }
+  function size(){
+    DPR=Math.min(devicePixelRatio||1,2);
+    var r=cv.parentNode.getBoundingClientRect();
+    W=r.width;H=r.height;cv.width=W*DPR;cv.height=H*DPR;
+    cv.style.width=W+'px';cv.style.height=H+'px';
+    ctx.setTransform(DPR,0,0,DPR,0,0);cx=W/2;cy=H*0.46;
+  }
+  function seed(){
+    parts=[];var n=Math.round(Math.min(W,900)/7);
+    for(var i=0;i<n;i++){
+      var a=Math.random()*Math.PI*2, rad=180+Math.random()*Math.max(W,H)*0.55;
+      parts.push({a:a,r:rad,rr:rad,sp:0.15+Math.random()*0.5,sz:0.6+Math.random()*1.8});
+    }
+  }
+  function draw(){
+    ctx.clearRect(0,0,W,H);
+    var col=hot();
+    // core glow (amber halo fusing into the hot accent)
+    ctx.globalCompositeOperation='lighter';
+    ctx.fillStyle='rgba(255,177,60,.10)';ctx.beginPath();ctx.arc(cx,cy,150,0,7);ctx.fill();
+    ctx.fillStyle=col;ctx.globalAlpha=.16;ctx.beginPath();ctx.arc(cx,cy,60,0,7);ctx.fill();
+    ctx.globalAlpha=1;
+    for(var i=0;i<parts.length;i++){
+      var p=parts[i];
+      if(!reduce){p.r-=p.sp; if(p.r<40){p.r=p.rr;}}
+      var x=cx+Math.cos(p.a)*p.r, y=cy+Math.sin(p.a)*p.r*0.62;
+      var near=1-Math.min(p.r/p.rr,1);
+      ctx.globalAlpha=0.15+near*0.8;
+      ctx.fillStyle= near>0.6? '#FFCE7A' : col;
+      ctx.beginPath();ctx.arc(x,y,p.sz*(0.6+near),0,7);ctx.fill();
+    }
+    ctx.globalAlpha=1;ctx.globalCompositeOperation='source-over';
+    if(!reduce) raf=requestAnimationFrame(draw);
+  }
+  var raf;
+  function boot(){cancelAnimationFrame(raf);size();seed();draw();}
+  window.addEventListener('resize',boot);
+  boot();
+  // redraw once on theme change so core hue follows
+  new MutationObserver(function(){if(reduce){draw();}}).observe(root,{attributes:true,attributeFilter:['data-theme']});
+})();
+</script>
+
+</body>
+</html>
