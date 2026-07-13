@@ -33,15 +33,30 @@ Remaining before merge: owner spot-check of rendered pages; production-feed diff
 
 Pinned. Separate exercise underway for visual style.
 
-## Phase 4 — Hosting (research collected, decision blocked on owner data)
+## Phase 4 — Hosting (options documented, decision blocked on owner data)
 
-Spec: `specs/phase-4-hosting.md`. Research: `verification/hosting-research.md`.
+Spec: `specs/phase-4-hosting.md`. Research: `verification/hosting-research.md`. Options: `docs/hosting.md`.
 
-- [x] GFW/DNS status: apex resolves cleanly from 5 mainland vantage points to Linode Tokyo origin (DNS-level; HTTP-level check still owner action)
-- [x] POP latency: secondary-source table compiled (Cloudflare HK, Bunny.net Asia, Vercel TYO, Linode TYO/SGP)
+### 🚨 P0 — production TLS certificate expired 2023-04-17
+
+Discovered 2026-07-09. The apex serves a cert that expired 1,179 days ago, with a broken chain, and `http://` 301s into it. **Strict-TLS podcast clients — Apple Podcasts, Overcast, Pocket Casts, 小宇宙 — cannot fetch the feed or any episode.** The bytes are fine (`curl -k` returns `200` on the feeds and `206` on audio); only the transport is broken.
+
+- [ ] **Owner action (P0):** `sudo certbot --nginx -d TechFusionFM.com -d www.TechFusionFM.com` on the Linode box; confirm the renewal timer. $0, no URL/GUID change, unblocks every subscriber.
+- [ ] Then verify all 45 enclosure URLs return `200`/`206` over valid TLS.
+
+This is independent of stack and topology, and it outranks everything below.
+
+### Research & options
+
+- [x] GFW/DNS status: apex resolves cleanly from 5 mainland vantage points to Linode Tokyo origin
+- [x] HTTP-level check run (2026-07-09) — see P0 above; mainland tests are meaningless until the cert is fixed
+- [x] POP latency: secondary-source table compiled (Bunny.net Asia, Vercel TYO, Linode TYO/SGP)
 - [x] ICP requirements documented (2–6 weeks with CN entity, 3–6 months without; offshore-enclosure mirror question needs paid consult)
+- [x] Deploy options vetted and written up in `docs/hosting.md`; Cloudflare Pages excluded by owner directive, GitHub Pages / Vercel / non-Enterprise EdgeOne ruled out on evidence
 - [ ] **Owner action:** audience split (mainland vs. diaspora %) from Apple Podcasts Connect / Xiaoyuzhou / Spotify dashboards — the decision matrix keys on this
-- [ ] **Owner action:** HTTP-level + latency tests from a real mainland vantage point
+- [ ] **Owner action:** mainland HTTP + latency tests — *after* the cert fix
 - [ ] Topology decision per spec §7, then implementation
 
-Pragmatic split still the leading candidate: HTML on a global CDN, heavy audio (`/audio/*.mp3`) on an Asia-POP CDN, feed URLs unchanged.
+Three live options, none chosen: **(A)** fix TLS and stay on Linode Tokyo; **(B)** Bunny.net fronting the apex with `/audio/*` path-routed to an Asia POP (the standing favourite); **(C)** Alibaba Cloud DCDN's no-ICP "Global (excluding mainland)" zone — the only no-ICP config found that serves mainland users rather than returning `401`.
+
+> ⚠️ `source/audio/{1,2,22}.mp3` are `.gitignore`d (111–137 MB, over GitHub's 100 MB file limit) and live **only on the Linode box**. Any repo-only cutover 404s those three episodes.

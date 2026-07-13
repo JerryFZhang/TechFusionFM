@@ -84,20 +84,29 @@ Pick the topology based on what §6 returns:
 
 | If the data shows… | Then lean toward… |
 |---|---|
-| Apex reachable from mainland, latency tolerable, audience mostly diaspora | **Single global CDN** (Cloudflare Pages / Vercel). Simplest. Done. |
-| Apex reachable, but audio is slow/lossy from mainland, audience meaningfully mainland | **Split:** HTML+feeds on global CDN, `/audio/*` proxied to an Asia POP (Bunny.net HK/SG or Linode Tokyo) — feed URLs unchanged per §5 |
+| Apex reachable from mainland, latency tolerable, audience mostly diaspora | **Stay on the existing Linode Tokyo origin** with a valid, auto-renewing cert. Simplest. Done. |
+| Apex reachable, but audio is slow/lossy from mainland, audience meaningfully mainland | **Split:** one edge fronting the apex, `/audio/*` path-routed to an Asia POP (Bunny.net HK/SG/TYO or Linode Tokyo) — feed URLs unchanged per §5 |
 | Apex GFW-blocked or unreliable, audience mainland-heavy | Escalate to owner: **ICP-filed mainland mirror** for HTML/feeds + offshore audio, or accept degraded mainland delivery |
-| Audience almost entirely diaspora/global | Don't over-engineer — global CDN, skip the Asia split |
+| Audience almost entirely diaspora/global | Don't over-engineer — single origin + CDN, skip the Asia split |
 
 The "split HTML/audio" option is the pragmatic favorite going in, but only the data justifies it.
 
+**Candidates ruled out** (see [`docs/hosting.md`](../docs/hosting.md) §2 for evidence):
+- **Cloudflare Pages** — excluded by owner directive; not a target.
+- **GitHub Pages** — 1 GB published-site cap vs. a ~2.5 GB catalog; 100 MB per-file git limit rejects `1/2/22.mp3` outright.
+- **Vercel** — AUP forbids hosting "media for hot-linking," which is what an RSS enclosure is.
+- **Tencent EdgeOne** (non-Enterprise) — its no-ICP zone returns HTTP `401` to mainland clients *by design*.
+
 ## 8. Implementation (once topology is chosen)
 
-### 8.1 Single global CDN path
-- Connect repo to Cloudflare Pages (or Vercel); build command `npx hexo generate`, output dir `public/`
-- Point `TechFusionFM.com` apex + `www` at the host
-- Verify all three feeds + audio resolve over the new host
-- Set up branch previews for PRs
+### 8.0 Prerequisite — restore TLS (do this first, regardless of topology)
+The apex certificate expired 2023-04-17; strict-TLS podcast clients cannot reach the feed at all. Run certbot on the existing origin and confirm the renewal timer is armed **before** measuring anything or cutting over. See [`docs/hosting.md`](../docs/hosting.md) §0.
+
+### 8.1 Single-origin path
+- Keep the static build on one origin; build command `npx hexo generate`, output dir `public/`
+- Valid, auto-renewing TLS on `TechFusionFM.com` apex + `www`
+- Verify all three feeds + all 45 audio enclosures resolve over the origin
+- If a CDN is placed in front, confirm it is apex-capable and permits on-demand media in its AUP
 
 ### 8.2 Split path (additional steps)
 - Stand up audio origin on the chosen Asia POP, sync `public/audio/*` there
