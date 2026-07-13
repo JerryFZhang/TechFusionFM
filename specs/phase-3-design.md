@@ -1,8 +1,8 @@
 # Spec: Phase 3 — Design refresh (direction)
 
-**Status:** Direction proposed, awaiting owner sign-off. Not yet implemented.
+**Status:** Directions proposed, awaiting owner sign-off. Not yet implemented.
 **Depends on:** Phase 2 (Hexo 7 + Pug theme). **Does not touch:** the feed generator, the GUID pin, or any URL.
-**Mockup:** [`design/phase-3-direction.html`](../design/phase-3-direction.html) — open in a browser; toggle light/dark with the ◐ button.
+**Gallery:** [`design/variations/`](../design/variations/) — **five** distinct directions to choose from ([README](../design/variations/README.md)). The reactor-core below is direction **A**; B–E (broadcast / editorial-seal / terminal / waveform) are alternates. Open any `.html` in a browser; ◐ toggles light/dark.
 
 ---
 
