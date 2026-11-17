@@ -1,29 +1,14 @@
 .page-top.animated.fadeInDown
   .nav
     li
-      a(href="/")= __('Home')	
+      a(href="/")= __('Home')
     li
-      if is_current('Spotlight')
-        a.current(href="/categories/spotlight/")= __('Spotlight')					
-      else
-        a(href="/categories/spotlight/")= __('Spotlight')	
+      a(class=is_current('/categories/spotlight/') ? 'current' : null, href="/categories/spotlight/")= __('Spotlight')
     li
-      if is_current('Gadgets')
-        a.current(href="/categories/gadgets/")= __('Gadgets')					
-      else
-        a(href="/categories/gadgets/")= __('Gadgets')	
+      a(class=is_current('/categories/gadgets/') ? 'current' : null, href="/categories/gadgets/")= __('Gadgets')
     li
-      if is_current('FAQ')
-        a.current(href="/faq")= __('FAQ')			
-      else
-        a(href="/faq")= __('FAQ')
+      a(class=is_current('/faq/') ? 'current' : null, href="/faq/")= __('FAQ')
     li
-      if is_current('Email')
-        a.current(href="/links")= __('Email')					
-      else
-        a(href="mailto:hi@TechFusionFM.com")= __('Email')	
+      a(href="mailto:" + ((theme.social && theme.social.email) || 'hi@TechFusionFM.com'))= __('Email')
     li
-      if is_current('Donate')
-        a.current(href="/donate/")= __('Donate')					
-      else
-        a(href="/donate/")= __('Donate')	
+      a(class=is_current('/donate/') ? 'current' : null, href="/donate/")= __('Donate')

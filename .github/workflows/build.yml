@@ -8,6 +8,13 @@ on:
     branches:
       - master
 
+permissions:
+  contents: read
+
+concurrency:
+  group: build-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -25,4 +32,10 @@ jobs:
         run: npm ci
 
       - name: Build site
-        run: npx hexo generate
+        run: npm run build
+
+      # Feed parity gate: published GUIDs / links / enclosure URLs must never
+      # change, plus Apple / Podcast Index channel + item requirements.
+      # xmllint ships on ubuntu-latest (libxml2-utils).
+      - name: Check feeds
+        run: npm run check:feeds

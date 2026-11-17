@@ -24,19 +24,19 @@ Sizes match the feed's live `Content-Length`. **This is a local backup on one ma
 
 - **43 in-repo files: repo bytes == live server bytes** (spot-checked via `Content-Length`). The repo audio is faithful to production; a rebuild-based cutover serves identical bytes.
 - **Built feed `<enclosure length>` == live production feed for all 45.** No length changes are introduced by the Hexo 7 build. (GUID + enclosure URL identity was verified separately — that is what podcast clients dedup on.)
-- **5 episodes carry a stale `<enclosure length>`** — the feed's declared length differs from the actual file:
+- **5 episodes carried a stale `<enclosure length>` — fixed 2026-11-17.** The feed's declared length (driven by post front matter) had drifted from the actual file:
 
-  | ep | file bytes (repo/live) | feed `<enclosure length>` |
-  |---:|---:|---:|
-  | 1 | 126,178,859 | 126,178,382 |
-  | 4 | 97,828,450 | 93,917,681 |
-  | 16 | 82,912,850 | 82,826,554 |
-  | 34 | 20,756,244 | 20,693,629 |
-  | 41 | 21,253,615 | 43,877,942 |
+  | ep | file bytes (repo/live) | old feed `<enclosure length>` | status |
+  |---:|---:|---:|---|
+  | 1 | 126,178,859 | 126,178,382 | fixed (manifest size; file is server-only) |
+  | 4 | 97,828,450 | 93,917,681 | fixed |
+  | 16 | 82,912,850 | 82,826,554 | fixed |
+  | 34 | 20,756,244 | 20,693,629 | fixed |
+  | 41 | 21,253,615 | 43,877,942 | fixed |
 
-  This is a **pre-existing production quirk** (the length attribute is driven by post frontmatter, which drifted from the re-encoded files), present in the live feed today — **not** introduced by any migration. It is **cosmetic**: `<enclosure length>` is a size hint, and no mainstream podcast client dedups or re-downloads on it — they key on `<guid>` (and, in some clients, the enclosure URL), both of which are stable. Clients read the true size from the server's `Content-Length` at download time.
+  The `length` front matter of posts 1, 4, 16, 34 and 41 now equals the real byte size (`stat` on `source/audio/*.mp3`; for ep 1, whose file is gitignored and server-only, the size recorded in `audio-manifest.tsv`). Post 41 had also inherited post 40's length **and** `duration` (01:30:30); its duration is now `00:43:22`, from `ffprobe` on `source/audio/41.mp3` (2602.19 s). GUIDs and enclosure URLs were not touched. The `declared_len_matches` column in the TSV records the state at generation time (2026-07-12); after this fix all 45 declared lengths match.
 
-  Optional cleanup, not required for cutover: correct the `length` in the five episodes' frontmatter so the feed self-describes accurately. Harmless to subscribers either way.
+  This was a pre-existing production quirk, never a migration regression, and it was cosmetic: `<enclosure length>` is a size hint, and clients key on `<guid>` (and sometimes the enclosure URL), both stable.
 
 ## Regenerating
 

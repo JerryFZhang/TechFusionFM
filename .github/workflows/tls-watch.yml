@@ -1,0 +1,42 @@
+name: TLS watch
+
+# Weekly check that https://TechFusionFM.com serves a valid certificate that is
+# not about to expire. The cert expired unnoticed from 2023-04-17 until 2026
+# and silently cut off every strict-TLS podcast client; a failed scheduled run
+# makes GitHub email the repository owner.
+
+on:
+  schedule:
+    - cron: '17 3 * * 1' # Mondays 03:17 UTC
+  workflow_dispatch:
+
+permissions: {}
+
+jobs:
+  tls:
+    runs-on: ubuntu-latest
+    env:
+      HOST: TechFusionFM.com
+      MIN_DAYS: '21'
+    steps:
+      - name: Certificate not expiring within 21 days
+        run: |
+          set -euo pipefail
+          cert="$(echo | openssl s_client -connect "$HOST:443" -servername "$HOST" 2>/dev/null \
+            | openssl x509)" || { echo "::error::Could not fetch a certificate from $HOST:443"; exit 1; }
+          echo "$cert" | openssl x509 -noout -subject -issuer -enddate
+          if ! echo "$cert" | openssl x509 -noout -checkend $((MIN_DAYS * 86400)); then
+            echo "::error::TLS certificate for $HOST expires within $MIN_DAYS days (or has expired). Renew: sudo certbot renew / certbot --nginx"
+            exit 1
+          fi
+
+      - name: Chain and hostname validate (no -k)
+        run: |
+          set -euo pipefail
+          for path in podcast.xml spotlight.xml gadgets.xml; do
+            if ! curl -sSfI --max-time 30 "https://$HOST/$path" >/dev/null; then
+              echo "::error::https://$HOST/$path failed TLS verification or did not return 2xx"
+              exit 1
+            fi
+            echo "ok https://$HOST/$path"
+          done

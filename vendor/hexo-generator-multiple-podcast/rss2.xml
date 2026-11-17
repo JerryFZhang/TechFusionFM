@@ -5,7 +5,7 @@
      xmlns:dc="http://purl.org/dc/elements/1.1/"
      xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd"
      xmlns:psc="http://podlove.org/simple-chapters/"
-     xmlns:rawvoice="http://www.rawvoice.com/rawvoiceRssModule/">
+     xmlns:podcast="https://podcastindex.org/namespace/1.0">
   <channel>
     <title>{{ feedConfig.title }}</title>
     <description>{{ feedConfig.subtitle }}</description>
@@ -17,7 +17,7 @@
     <pubDate>{{ as_of | date_to_rfc822 }}</pubDate>
     <lastBuildDate>{{ as_of | date_to_rfc822 }}</lastBuildDate>
     <generator>Hexo v{{ hexo_version }}</generator>
-    <language>zh</language>
+    <language>{{ feedConfig.language }}</language>
     <managingEditor>{{ feedConfig.itunes.email }} ({{ feedConfig.itunes.owner }})</managingEditor>
     <image>
       <title>{{ feedConfig.title }}</title>
@@ -32,11 +32,24 @@
       <itunes:email>{{ feedConfig.itunes.email }}</itunes:email>
     </itunes:owner>
     <itunes:image href="{{ config.url }}{{ config.root }}{{ feedConfig.image }}" />
+    {%- if feedConfig.itunes.subcategory %}
     <itunes:category text="{{ feedConfig.itunes.category }}">
       <itunes:category text="{{ feedConfig.itunes.subcategory }}" />
     </itunes:category>
+    {%- else %}
+    <itunes:category text="{{ feedConfig.itunes.category }}" />
+    {%- endif %}
     <itunes:explicit>{{ feedConfig.itunes.explicit }}</itunes:explicit>
-    <rawvoice:subscribe feed="{{ feedConfig.self_url }}" itunes="{{ feedConfig.itunes.url }}" />
+    <itunes:type>{{ feedConfig.itunes.type }}</itunes:type>
+    {%- if feedConfig.podcast_guid %}
+    <podcast:guid>{{ feedConfig.podcast_guid }}</podcast:guid>
+    {%- endif %}
+    {%- if feedConfig.podcast_locked %}
+    <podcast:locked owner="{{ feedConfig.podcast_locked.owner }}">{{ feedConfig.podcast_locked.value }}</podcast:locked>
+    {%- endif %}
+    {%- if feedConfig.podcast_funding %}
+    <podcast:funding url="{{ feedConfig.podcast_funding.url }}">{{ feedConfig.podcast_funding.text }}</podcast:funding>
+    {%- endif %}
     {% for episode in episodes %}<item>
       <title>{{ episode.title }}</title>
       <link>{{ episode.permalink }}</link>
@@ -52,10 +65,13 @@
       <enclosure url="{{ episode.media }}" length="{{ episode.length }}" type="{{ episode.media_type }}" />
       <itunes:author>{{ feedConfig.itunes.owner }}</itunes:author>
       <itunes:subtitle>{{ episode.subtitle }}</itunes:subtitle>
-      <itunes:summary>{{ episode.content | striptags }}</itunes:summary>
+      <itunes:summary>{{ episode.summary }}</itunes:summary>
       <itunes:image href="{{ config.url }}{{ config.root }}{{ episode.image }}" />
       <itunes:explicit>{{ episode.explicit }}</itunes:explicit>
       <itunes:duration>{{ episode.duration }}</itunes:duration>
+      <itunes:title>{{ episode.itunes_title }}</itunes:title>
+      <itunes:episode>{{ episode.number }}</itunes:episode>
+      <itunes:episodeType>{{ episode.episode_type }}</itunes:episodeType>
       {%- if episode.chapters %}
       <psc:chapters version="1.2">
         {% for chapter in episode.chapters -%}

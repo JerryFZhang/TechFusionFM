@@ -1,0 +1,10 @@
+//- Picks the show (key into theme.shows) for the current page:
+//- category pages use page.category, posts their first spotlight/gadgets
+//- category, everything else the main podcast.
+- var showKey = 'podcast';
+- var catNames = [];
+- if (page.category) catNames = [page.category];
+- else if (page.categories && typeof page.categories.map === 'function') catNames = page.categories.map(function (c) { return c.name; });
+- for (var ci = 0; ci < catNames.length; ci++) { if (catNames[ci] === 'spotlight' || catNames[ci] === 'gadgets') { showKey = catNames[ci]; break; } }
+- var shows = theme.shows || {};
+- var show = shows[showKey] || shows.podcast || {};

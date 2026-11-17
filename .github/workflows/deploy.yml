@@ -1,0 +1,138 @@
+name: Deploy
+
+# Builds master and rsyncs public/ to the nginx docroot on the Linode Tokyo box.
+#
+# Required repository secrets (Settings -> Secrets and variables -> Actions):
+#   DEPLOY_HOST          e.g. TechFusionFM.com or the Linode IP
+#   DEPLOY_USER          unprivileged deploy user that owns the docroot
+#   DEPLOY_SSH_KEY       private key (ed25519) for DEPLOY_USER, no passphrase
+#   DEPLOY_PATH          nginx docroot, e.g. /var/www/techfusionfm (no trailing slash)
+# Optional:
+#   DEPLOY_PORT          SSH port, default 22
+#   DEPLOY_KNOWN_HOSTS   output of `ssh-keyscan -t ed25519 <host>` captured once from a
+#                        trusted network. Strongly preferred: without it the host key is
+#                        fetched with ssh-keyscan at deploy time (trust on first use).
+#
+# Audio: Hexo copies source/audio/*.mp3 into public/audio/, but 1.mp3, 2.mp3 and
+# 22.mp3 are over GitHub's 100 MB limit and are .gitignored -- they exist ONLY on
+# the server (see verification/audio-manifest.md). So the site sync excludes
+# audio/ entirely, and audio goes up in a separate additive step that never
+# deletes or overwrites anything on the server.
+
+on:
+  push:
+    branches:
+      - master
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: deploy-production
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    env:
+      DEPLOY_HOST: ${{ secrets.DEPLOY_HOST }}
+      DEPLOY_USER: ${{ secrets.DEPLOY_USER }}
+      DEPLOY_PATH: ${{ secrets.DEPLOY_PATH }}
+      DEPLOY_PORT: ${{ secrets.DEPLOY_PORT }}
+      SITE: https://TechFusionFM.com
+    steps:
+      - name: Check deploy secrets
+        env:
+          HAS_KEY: ${{ secrets.DEPLOY_SSH_KEY != '' }}
+        run: |
+          missing=""
+          [ -n "$DEPLOY_HOST" ] || missing="$missing DEPLOY_HOST"
+          [ -n "$DEPLOY_USER" ] || missing="$missing DEPLOY_USER"
+          [ -n "$DEPLOY_PATH" ] || missing="$missing DEPLOY_PATH"
+          [ "$HAS_KEY" = "true" ] || missing="$missing DEPLOY_SSH_KEY"
+          if [ -n "$missing" ]; then
+            echo "::error::Deploy secrets not configured:$missing. See docs/launch.md section 0."
+            exit 1
+          fi
+          case "$DEPLOY_PATH" in
+            /*) ;;
+            *) echo "::error::DEPLOY_PATH must be an absolute path"; exit 1 ;;
+          esac
+          if [ "$DEPLOY_PATH" = "/" ]; then
+            echo "::error::DEPLOY_PATH must not be /"; exit 1
+          fi
+
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build site
+        run: npm run build
+
+      - name: Check feeds
+        run: npm run check:feeds
+
+      - name: Configure SSH
+        env:
+          DEPLOY_SSH_KEY: ${{ secrets.DEPLOY_SSH_KEY }}
+          DEPLOY_KNOWN_HOSTS: ${{ secrets.DEPLOY_KNOWN_HOSTS }}
+        run: |
+          set -euo pipefail
+          port="${DEPLOY_PORT:-22}"
+          install -d -m 700 ~/.ssh
+          umask 077
+          printf '%s\n' "$DEPLOY_SSH_KEY" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+          if [ -n "${DEPLOY_KNOWN_HOSTS:-}" ]; then
+            # Pinned host key: protects against a MITM on the first connection.
+            printf '%s\n' "$DEPLOY_KNOWN_HOSTS" > ~/.ssh/known_hosts
+          else
+            # Fallback: trust-on-first-use. Set DEPLOY_KNOWN_HOSTS to pin instead.
+            echo "::warning::DEPLOY_KNOWN_HOSTS not set; using ssh-keyscan (TOFU)"
+            ssh-keyscan -p "$port" -T 15 "$DEPLOY_HOST" > ~/.ssh/known_hosts
+          fi
+          chmod 600 ~/.ssh/known_hosts
+          echo "RSYNC_RSH=ssh -i $HOME/.ssh/deploy_key -p $port -o IdentitiesOnly=yes -o StrictHostKeyChecking=yes -o UserKnownHostsFile=$HOME/.ssh/known_hosts" >> "$GITHUB_ENV"
+
+      - name: Sync site (excluding audio/)
+        # --delete-after removes server files that are no longer in public/,
+        # AFTER the transfer, so the live site never has holes mid-sync.
+        # --exclude 'audio/' makes rsync neither send nor delete anything under
+        # audio/ on the receiver: excluded paths are protected from --delete
+        # unless --delete-excluded is given. NEVER add --delete-excluded here --
+        # it would wipe the server-only 1.mp3 / 2.mp3 / 22.mp3 and every episode.
+        # .well-known/ is protected the same way (ACME / certbot webroot challenges).
+        run: |
+          rsync -rlzv --checksum --delete-after --exclude 'audio/' --exclude '.well-known/' \
+            public/ "$DEPLOY_USER@$DEPLOY_HOST:$DEPLOY_PATH/"
+
+      - name: Upload new audio (additive only)
+        # No --delete and --ignore-existing: uploads new episodes (e.g. 46.mp3),
+        # never deletes or overwrites a file already on the server. Replacing a
+        # published mp3 is a manual, deliberate operation.
+        run: |
+          rsync -rlzv --ignore-existing \
+            public/audio/ "$DEPLOY_USER@$DEPLOY_HOST:$DEPLOY_PATH/audio/"
+
+      - name: Smoke test (valid TLS, no -k)
+        run: |
+          set -euo pipefail
+          for f in podcast.xml spotlight.xml gadgets.xml; do
+            curl -sSf --max-time 30 -o /dev/null "$SITE/$f"
+            echo "ok $SITE/$f"
+          done
+          curl -sSf --max-time 60 -r 0-1023 -o /dev/null "$SITE/audio/45.mp3"
+          echo "ok $SITE/audio/45.mp3 (range)"
+
+      - name: Remove SSH key
+        if: always()
+        run: rm -f ~/.ssh/deploy_key

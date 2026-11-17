@@ -1,0 +1,86 @@
+{
+  "spotlight.xml": [
+    {
+      "guid": "https://TechFusionFM.com/44/",
+      "link": "https://TechFusionFM.com/44/",
+      "enclosure": "https://TechFusionFM.com/audio/44.mp3"
+    },
+    {
+      "guid": "https://TechFusionFM.com/43/",
+      "link": "https://TechFusionFM.com/43/",
+      "enclosure": "https://TechFusionFM.com/audio/43.mp3"
+    },
+    {
+      "guid": "https://TechFusionFM.com/41/",
+      "link": "https://TechFusionFM.com/41/",
+      "enclosure": "https://TechFusionFM.com/audio/41.mp3"
+    },
+    {
+      "guid": "https://TechFusionFM.com/40/",
+      "link": "https://TechFusionFM.com/40/",
+      "enclosure": "https://TechFusionFM.com/audio/40.mp3"
+    },
+    {
+      "guid": "https://TechFusionFM.com/36/",
+      "link": "https://TechFusionFM.com/36/",
+      "enclosure": "https://TechFusionFM.com/audio/36.mp3"
+    },
+    {
+      "guid": "https://TechFusionFM.com/35/",
+      "link": "https://TechFusionFM.com/35/",
+      "enclosure": "https://TechFusionFM.com/audio/35.mp3"
+    },
+    {
+      "guid": "https://TechFusionFM.com/29/",
+      "link": "https://TechFusionFM.com/29/",
+      "enclosure": "https://TechFusionFM.com/audio/29.mp3"
+    },
+    {
+      "guid": "https://TechFusionFM.com/26/",
+      "link": "https://TechFusionFM.com/26/",
+      "enclosure": "https://TechFusionFM.com/audio/26.mp3"
+    },
+    {
+      "guid": "https://TechFusionFM.com/23/",
+      "link": "https://TechFusionFM.com/23/",
+      "enclosure": "https://TechFusionFM.com/audio/23.mp3"
+    },
+    {
+      "guid": "https://TechFusionFM.com/17/",
+      "link": "https://TechFusionFM.com/17/",
+      "enclosure": "https://TechFusionFM.com/audio/17.mp3"
+    },
+    {
+      "guid": "https://TechFusionFM.com/14/",
+      "link": "https://TechFusionFM.com/14/",
+      "enclosure": "https://TechFusionFM.com/audio/14.mp3"
+    },
+    {
+      "guid": "https://TechFusionFM.com/11/",
+      "link": "https://TechFusionFM.com/11/",
+      "enclosure": "https://TechFusionFM.com/audio/11.mp3"
+    }
+  ],
+  "gadgets.xml": [
+    {
+      "guid": "https://TechFusionFM.com/42/",
+      "link": "https://TechFusionFM.com/42/",
+      "enclosure": "https://TechFusionFM.com/audio/42.mp3"
+    },
+    {
+      "guid": "https://TechFusionFM.com/38/",
+      "link": "https://TechFusionFM.com/38/",
+      "enclosure": "https://TechFusionFM.com/audio/38.mp3"
+    },
+    {
+      "guid": "https://TechFusionFM.com/34/",
+      "link": "https://TechFusionFM.com/34/",
+      "enclosure": "https://TechFusionFM.com/audio/34.mp3"
+    },
+    {
+      "guid": "https://TechFusionFM.com/25/",
+      "link": "https://TechFusionFM.com/25/",
+      "enclosure": "https://TechFusionFM.com/audio/25.mp3"
+    }
+  ]
+}
