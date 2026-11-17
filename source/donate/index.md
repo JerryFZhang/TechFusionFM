@@ -2,6 +2,7 @@
 title: 如何支持我们？
 date: 2017-02-01 00:00:01
 layout: page
+desc: 支持《科技聚变》：评分留言、订阅分享、加入知识星球，或通过支付宝和 PayPal 捐助。
 ---
 
 - 在 [Apple Podcasts](https://podcasts.apple.com/podcast/id1202658654) 上为我们评分、留言。

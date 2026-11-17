@@ -3,9 +3,6 @@ extends partial/layout
 block site_title
     !=  "归档 - " + config.title
 
-block description
-    - var desc = '归档页面 - ' + config.title;
-    meta(name="description", content=desc)
 
 block content
     .autopagerize_page_element: .content
