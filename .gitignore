@@ -11,8 +11,5 @@ source/audio/2.mp3
 source/audio/22.mp3
 *.out
 *.pyc
-archive/telebot/nohup.out
-archive/telebot/*.pyc
-archive/telebot/*.tmp
 public/
 *.out
