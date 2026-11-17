@@ -226,3 +226,76 @@ Rationale:
 - Evaluate replacing `hexo-generator-multiple-podcast` with a maintained
   feed generator; port the three behaviors (locale, description=subtitle,
   title prefix) into the new generator's templating.
+
+---
+
+## 3. 2026-11-17 — relaunch feed modernization (`hexo-generator-multiple-podcast`)
+
+Changes to `vendor/hexo-generator-multiple-podcast/{rss2.xml,lib/generator.js}`
+and the `podcasts:` blocks of `_config.yml`. **Not changed:** item `<guid>`,
+item `<link>`, enclosure URL, `media_base_url`, feed paths, the `#N: ` item
+`<title>` prefix, `<description>` = subtitle. Verified by rebuilding and
+diffing guid / link / enclosure url / enclosure length / title per item
+against a pre-change build of all three feeds, and guid + enclosure url
+against `backup-rss.xml` (identical); `xmllint --noout` passes on all three.
+
+### `rss2.xml`
+
+| Change | Before | After |
+|---|---|---|
+| Namespaces | `xmlns:rawvoice` | removed; added `xmlns:podcast="https://podcastindex.org/namespace/1.0"` |
+| `<rawvoice:subscribe>` | emitted (with empty `itunes=""`) | removed (obsolete Blubrry/RawVoice tag) |
+| `<language>` | hardcoded `zh` | `{{ feedConfig.language }}` (see generator) — now `zh-cn` |
+| `<itunes:category>` | always nested a subcategory element | nested `<itunes:category>` only when `itunes.subcategory` is set; otherwise a single self-closing element |
+| Channel `<itunes:type>` | absent | `{{ feedConfig.itunes.type }}` (`episodic`) |
+| Channel `<podcast:guid>` | absent | `{{ feedConfig.podcast_guid }}` (pinned in config, see below) |
+| Channel `<podcast:locked>` | absent | `<podcast:locked owner="hi@TechFusionFM.com">yes</podcast:locked>` from `podcast_locked` |
+| Channel `<podcast:funding>` | absent | `<podcast:funding url="https://TechFusionFM.com/donate/">支持我们</podcast:funding>` from `podcast_funding` |
+| Item `<itunes:summary>` | `{{ episode.content \| striptags }}` — always **empty**, because §2's patch removed `content` from the episode object | `{{ episode.summary }}` (built in generator) |
+| Item `<itunes:title>` | absent | clean post title, no `#N: ` prefix |
+| Item `<itunes:episode>` | absent | the same per-feed N used in the `#N: ` title prefix |
+| Item `<itunes:episodeType>` | absent | `full` (post front matter `episode_type` can override) |
+
+Channel `podcast:*` elements are each wrapped in `{% if %}`, so a feed
+without the config keys renders without them.
+
+### `lib/generator.js`
+
+- `getFeedConfig`: dropped the `language: 'en-US'` default; `cfg.language` is
+  now `feed.language || feed.itunes.language || 'zh-cn'`. Added
+  `default_media_type: 'audio/mpeg'` (enclosure `type` when the post has no
+  `media_type`; also set in config) and `itunes.type` defaulting to
+  `episodic`. Default `itunes.explicit` changed from `no` to `false`.
+- New `buildSummary(subtitle, html)`: renders `subtitle`, a blank line, then
+  the rendered post body converted to plain text (tags stripped, `<li>` →
+  `- ` lines, block elements → paragraph breaks, marked's HTML entities
+  decoded so the template's autoescape does not double-escape). If the body
+  begins with the subtitle verbatim (most posts) it is not repeated. Truncated
+  to 4000 code points (never splits a surrogate pair) with a trailing `…`.
+  Output is unescaped text; nunjucks autoescape escapes `& < > " '` on render.
+- Episode object gains `itunes_title`, `number`, `episode_type`, `summary`.
+  `title` (with `#N: `) and `permalink` (§2 case pin) are untouched.
+
+### `_config.yml` (`podcasts:` blocks)
+
+| Key | podcast.xml | spotlight.xml | gadgets.xml |
+|---|---|---|---|
+| `itunes.explicit` | `clean` → `"false"` | same | same |
+| `itunes.category` | `Technology` | `Technology` → `News` | `Technology` |
+| `itunes.subcategory` | `Tech News` → *(removed)* | `Tech News` | `Gadgets` → *(removed)* |
+| `language` / `itunes.language` | `zh` → `zh-cn` | same | same |
+| `itunes.type` | `episodic` | `episodic` | `episodic` |
+| `default_media_type` | `audio/mpeg` | `audio/mpeg` | `audio/mpeg` |
+| `podcast_guid` | `a4d30f3d-2d43-5ed3-abc1-cb497f95dc2c` | `91f0af1c-18d3-58a9-b05e-cbb60ee02637` | `ab7b4574-6a20-56ab-bb9d-bbb5eae60ad1` |
+
+Apple's current category list has no "Technology > Tech News" or
+"Technology > Gadgets"; "Tech News" is a subcategory of **News**.
+
+`podcast_guid` is UUIDv5 with the Podcast Index namespace
+`ead4c236-bf58-58c6-a2c6-a6b28d128cb6` over the feed URL minus scheme and
+trailing slashes, using the host casing emitted in `atom:link rel="self"`
+(`TechFusionFM.com/podcast.xml`, etc.). The implementation was checked
+against the spec's example (`podnews.net/rss` →
+`9b024349-ccf0-5f69-a609-6b82873eab3c`). The values are **pinned in config,
+not computed at build time**: a podcast GUID must never change, even if the
+feed URL or host casing later does.

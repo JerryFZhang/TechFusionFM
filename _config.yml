@@ -22,6 +22,17 @@ podcasts:
     content_encoded: true # same as above, but includes the complete encoded text of the post; see note below
     copyright: "TechFusionFM.com"
     media_base_url: https://TechFusionFM.com/
+    default_media_type: audio/mpeg # enclosure type when a post has no media_type
+    language: zh-cn # channel <language>; falls back to itunes.language, then zh-cn
+    # Podcast Index namespace. podcast_guid is UUIDv5(ns ead4c236-bf58-58c6-a2c6-a6b28d128cb6,
+    # "TechFusionFM.com/podcast.xml"), pinned here so it never changes with the URL. Never edit.
+    podcast_guid: a4d30f3d-2d43-5ed3-abc1-cb497f95dc2c
+    podcast_locked:
+      owner: hi@TechFusionFM.com
+      value: "yes"
+    podcast_funding:
+      url: https://TechFusionFM.com/donate/
+      text: 支持我们
     limit: 1000
     itunes:
       summary: 《科技聚变》（TechFusion）是一档科技主题播客节目，我们谈论有关互联网的一切。
@@ -29,9 +40,10 @@ podcasts:
       owner: "TechFusionFM.com"
       email: hi@TechFusionFM.com # e-mail from which iTunes podcast is registered
       category: Technology # the category from iTunes; make sure to use their values 
-      subcategory: Tech News # same as above 
-      explicit: clean # valid values are yes, no, and clean 
-      language: zh
+      # no subcategory: template emits a single <itunes:category>
+      explicit: "false" # Apple now accepts only true / false
+      language: zh-cn
+      type: episodic # <itunes:type>
 - feed:
     path: spotlight.xml # relative to site root 
     title: 聚焦 (《科技聚变》出品）
@@ -41,16 +53,28 @@ podcasts:
     content_encoded: true # same as above, but includes the complete encoded text of the post; see note below 
     copyright: "TechFusionFM.com"
     media_base_url: https://TechFusionFM.com/
+    default_media_type: audio/mpeg # enclosure type when a post has no media_type
+    language: zh-cn # channel <language>; falls back to itunes.language, then zh-cn
+    # Podcast Index namespace. podcast_guid is UUIDv5(ns ead4c236-bf58-58c6-a2c6-a6b28d128cb6,
+    # "TechFusionFM.com/spotlight.xml"), pinned here so it never changes with the URL. Never edit.
+    podcast_guid: 91f0af1c-18d3-58a9-b05e-cbb60ee02637
+    podcast_locked:
+      owner: hi@TechFusionFM.com
+      value: "yes"
+    podcast_funding:
+      url: https://TechFusionFM.com/donate/
+      text: 支持我们
     limit: 1000
     itunes:
       summary: 《聚焦》是《科技聚变》的新闻主题特别节目，我们只聊一件事。
       author: "TechFusionFM.com" # defaults to config.author 
       owner: "TechFusionFM.com"
       email: hi@TechFusionFM.com # e-mail from which iTunes podcast is registered 
-      category: Technology # the category from iTunes; make sure to use their values 
+      category: News # the category from iTunes; make sure to use their values 
       subcategory: Tech News # same as above 
-      explicit: clean # valid values are yes, no, and clean 
-      language: zh
+      explicit: "false" # Apple now accepts only true / false
+      language: zh-cn
+      type: episodic # <itunes:type>
 - feed:
     path: gadgets.xml # relative to site root 
     title: 小玩意儿 (《科技聚变》出品）
@@ -60,6 +84,17 @@ podcasts:
     content_encoded: true # same as above, but includes the complete encoded text of the post; see note below 
     copyright: "TechFusionFM.com"
     media_base_url: https://TechFusionFM.com/
+    default_media_type: audio/mpeg # enclosure type when a post has no media_type
+    language: zh-cn # channel <language>; falls back to itunes.language, then zh-cn
+    # Podcast Index namespace. podcast_guid is UUIDv5(ns ead4c236-bf58-58c6-a2c6-a6b28d128cb6,
+    # "TechFusionFM.com/gadgets.xml"), pinned here so it never changes with the URL. Never edit.
+    podcast_guid: ab7b4574-6a20-56ab-bb9d-bbb5eae60ad1
+    podcast_locked:
+      owner: hi@TechFusionFM.com
+      value: "yes"
+    podcast_funding:
+      url: https://TechFusionFM.com/donate/
+      text: 支持我们
     limit: 1000
     itunes:
       summary: 《小玩意儿》是《科技聚变》的特别节目，我们聊新奇的一切。
@@ -67,9 +102,10 @@ podcasts:
       owner: "TechFusionFM.com"
       email: hi@TechFusionFM.com # e-mail from which iTunes podcast is registered 
       category: Technology # the category from iTunes; make sure to use their values 
-      subcategory: Gadgets # same as above 
-      explicit: clean # valid values are yes, no, and clean 
-      language: zh
+      # no subcategory: template emits a single <itunes:category>
+      explicit: "false" # Apple now accepts only true / false
+      language: zh-cn
+      type: episodic # <itunes:type>
 
 # URL
 ## If your site is put in a subdirectory, set url as 'http://yoursite.com/child' and root as '/child/'
