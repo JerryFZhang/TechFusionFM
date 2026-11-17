@@ -5,7 +5,8 @@
   "scripts": {
     "build": "hexo generate",
     "server": "hexo server",
-    "clean": "hexo clean"
+    "clean": "hexo clean",
+    "check:feeds": "node tools/check-feeds.mjs"
   },
   "engines": {
     "node": ">=22 <23"

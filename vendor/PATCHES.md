@@ -189,7 +189,7 @@ permalink the way Hexo 3 did:
 ```
 
 Verified byte-identical `<guid>` and `<link>` values against
-`backup-rss.xml` (the production feed snapshot).
+`verification/backup-rss.xml` (the production feed snapshot).
 
 ### Recommendation: **(b) move to `vendor/hexo-generator-multiple-podcast/` and depend via `file:`**
 
@@ -237,7 +237,7 @@ item `<link>`, enclosure URL, `media_base_url`, feed paths, the `#N: ` item
 `<title>` prefix, `<description>` = subtitle. Verified by rebuilding and
 diffing guid / link / enclosure url / enclosure length / title per item
 against a pre-change build of all three feeds, and guid + enclosure url
-against `backup-rss.xml` (identical); `xmllint --noout` passes on all three.
+against `verification/backup-rss.xml` (identical); `xmllint --noout` passes on all three.
 
 ### `rss2.xml`
 

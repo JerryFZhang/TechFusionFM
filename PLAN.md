@@ -24,7 +24,7 @@ Spec: `specs/phase-2-stack-modernization.md`. Decision: stay on Hexo (7.x) rathe
 - [x] Hexo 3.8 → 7.x + plugin swaps; kept `hexo-generator-index2` (upgraded to 0.2.0) because mainline never gained the load-bearing `include: tag podcast` filter
 - [x] Port Anatole theme Jade → Pug (13 templates); rendered-output diff vs. jade@1.11 ground truth
 - [x] Pin feed GUID construction to Hexo 3 semantics (Hexo ≥5 lowercases permalink hosts — would have changed every GUID)
-- [x] Feed parity verified vs. `backup-rss.xml`: 45/12/4 items, GUIDs + enclosures byte-identical
+- [x] Feed parity verified vs. `verification/backup-rss.xml`: 45/12/4 items, GUIDs + enclosures byte-identical
 - [x] GitHub Actions build workflow (`.github/workflows/build.yml`)
 
 Remaining before merge: owner spot-check of rendered pages; production-feed diff at merge time.

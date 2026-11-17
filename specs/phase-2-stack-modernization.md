@@ -52,7 +52,7 @@ Key files:
 - `themes/anatole/layout/*.jade` — 8 top-level templates (`index`, `post`, `page`, `archive`, `category`, `tag`, `mixins`) + 1 layout
 - `themes/anatole/layout/partial/*.jade` — 7 partials including three per-feed sidebars: `sidebar.jade`, `sidebar-spotlight.jade`, `sidebar-gadgets.jade`
 - `themes/anatole/source/css/` and `source/js/` — leave alone
-- `backup-rss.xml` — 240KB snapshot of the production podcast feed, useful as a parity baseline
+- `verification/backup-rss.xml` — 240KB snapshot of the production podcast feed, useful as a parity baseline
 
 ## 5. Target state
 
