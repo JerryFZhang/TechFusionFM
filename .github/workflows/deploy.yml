@@ -110,8 +110,9 @@ jobs:
         # audio/ on the receiver: excluded paths are protected from --delete
         # unless --delete-excluded is given. NEVER add --delete-excluded here --
         # it would wipe the server-only 1.mp3 / 2.mp3 / 22.mp3 and every episode.
+        # .well-known/ is protected the same way (ACME / certbot webroot challenges).
         run: |
-          rsync -rlzv --checksum --delete-after --exclude 'audio/' \
+          rsync -rlzv --checksum --delete-after --exclude 'audio/' --exclude '.well-known/' \
             public/ "$DEPLOY_USER@$DEPLOY_HOST:$DEPLOY_PATH/"
 
       - name: Upload new audio (additive only)

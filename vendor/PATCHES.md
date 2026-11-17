@@ -1,8 +1,9 @@
 # Vendored plugin patch audit
 
-This document records the divergence between the two Hexo plugins committed under
-`node_modules/` in this repository and their upstream npm releases at the same
-version. It exists to inform the §6.2 decision in
+This document records the divergence between the two Hexo plugins vendored in
+this repository (originally committed under `node_modules/`; since Phase 2 they
+live under `vendor/` and are installed via `file:` dependencies) and their
+upstream npm releases at the same version. It exists to inform the §6.2 decision in
 [`specs/phase-2-stack-modernization.md`](../specs/phase-2-stack-modernization.md):
 before swapping Hexo 3 → Hexo 7 we must know which (if any) local edits are
 load-bearing for RSS feed parity, so that feed subscribers do not lose history
@@ -23,7 +24,7 @@ Audit method:
 
 ## 1. `hexo-renderer-marked`
 
-- **Vendored version (per `node_modules/hexo-renderer-marked/package.json`):**
+- **Vendored version (per `vendor/hexo-renderer-marked/package.json`):**
   `0.2.11` (declared `^0.2.10` in `package.json`).
 - **Upstream tarball:**
   <https://registry.npmjs.org/hexo-renderer-marked/-/hexo-renderer-marked-0.2.11.tgz>
@@ -91,7 +92,7 @@ Rationale:
 
 ## 2. `hexo-generator-multiple-podcast`
 
-- **Vendored version (per `node_modules/hexo-generator-multiple-podcast/package.json`):**
+- **Vendored version (per `vendor/hexo-generator-multiple-podcast/package.json`):**
   `0.9.3`.
 - **Upstream tarball:**
   <https://registry.npmjs.org/hexo-generator-multiple-podcast/-/hexo-generator-multiple-podcast-0.9.3.tgz>

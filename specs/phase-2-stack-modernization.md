@@ -1,8 +1,8 @@
 # Spec: Phase 2 — Stack Modernization
 
-**Status:** Ready to execute
+**Status:** Shipped (PR #3)
 **Owner:** TBD
-**Branch base:** `main` (Phase 1 already merged via `claude/techfusionfm-redesign-plan-XxGW1`)
+**Branch base:** `master` (Phase 1 already merged via `claude/techfusionfm-redesign-plan-XxGW1`)
 **Estimated effort:** ~1 day of focused work + verification
 
 ---
@@ -128,7 +128,7 @@ Do not touch `themes/anatole/source/` (CSS, JS, images, fonts).
 
 ### 6.5 CI
 Add `.github/workflows/build.yml`:
-- Triggers: `push` to any branch, `pull_request` to `main`
+- Triggers: `push` to any branch, `pull_request` to `master`
 - Steps: checkout, setup-node (read version from `.nvmrc`), `npm ci`, `npx hexo generate`
 - Cache `node_modules` keyed on `package-lock.json`
 - Fail on non-zero exit
@@ -197,7 +197,7 @@ After the migration:
 
 ## 11. Deliverable
 
-One PR against `main`:
+One PR against `master`:
 - Updated `package.json`, `package-lock.json`, `.nvmrc`
 - Renamed + syntax-fixed `themes/anatole/layout/**/*.pug` files
 - Deleted `themes/anatole/layout/**/*.jade` files

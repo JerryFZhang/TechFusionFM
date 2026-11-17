@@ -25,7 +25,7 @@ Measured from this machine on **2026-07-09** against the live origin (`172.104.8
 | Same three URLs with `curl -k` | `200`, `200`, `206` — content is intact and Range works |
 | `http://TechFusionFM.com/podcast.xml` | `301` → `https://…` — **no plaintext fallback** |
 
-The cert has been expired for **1,179 days**. Apple Podcasts, Overcast, Pocket Casts and 小宇宙 all validate TLS, and `http://` redirects into the broken HTTPS, so there is no path by which a conforming client can fetch the feed or download an episode. The bytes are fine; the transport is not.
+The cert expired on **2023-04-17** and was still expired as of 2026-11-13. Apple Podcasts, Overcast, Pocket Casts and 小宇宙 all validate TLS, and `http://` redirects into the broken HTTPS, so there is no path by which a conforming client can fetch the feed or download an episode. The bytes are fine; the transport is not.
 
 **Every hosting option below fixes this as a side effect.** The cheapest fix is independent of all of them:
 

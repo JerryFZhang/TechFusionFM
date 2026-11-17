@@ -1,6 +1,6 @@
 # Spec: Phase 4 — Hosting & Mainland-China Delivery
 
-**Status:** Research-first; recommendation gated on data collection
+**Status:** Research done; topology decision blocked on owner data (see [`docs/hosting.md`](../docs/hosting.md))
 **Owner:** TBD
 **Depends on:** Phase 2 (site builds on modern Node, produces static `public/`)
 **Estimated effort:** ~0.5 day research + ~0.5 day implementation once a decision is made
@@ -117,7 +117,7 @@ The apex certificate expired 2023-04-17; strict-TLS podcast clients cannot reach
 ### 8.3 Common
 - DNS cutover plan with low-TTL pre-change
 - Keep the old origin warm until feeds verify on the new host
-- Add deploy step to the Phase 2 GitHub Actions workflow (build → deploy on merge to `main`)
+- Add deploy step to the Phase 2 GitHub Actions workflow (build → deploy on merge to `master`)
 
 ## 9. Verification
 
@@ -127,7 +127,7 @@ The apex certificate expired 2023-04-17; strict-TLS podcast clients cannot reach
 - [ ] Mainland vantage test: home page + one audio file load in acceptable time (define "acceptable" from §6.2 numbers)
 - [ ] Diaspora/global vantage test: fast as before or better
 - [ ] DNS propagation clean; old origin can be retired
-- [ ] CI deploy step green on merge to `main`
+- [ ] CI deploy step green on merge to `master`
 
 ## 10. Acceptance criteria
 
