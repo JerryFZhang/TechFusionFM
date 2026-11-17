@@ -1,36 +1,47 @@
-.sidebar.animated.fadeInDown
+//- Subscribe sidebar, driven by theme.shows[showKey] and theme.social.
+//- `show` / `showKey` are set by partial/show.pug (included in layout.pug).
+- var linkClass = showKey === 'podcast' ? null : showKey;
+- var social = theme.social || {};
+- var showLinks = show.links || {};
+//- [key, Font Awesome 4.2 icon class (or null), label]
+- var podcastLinkDefs = [['apple', 'fa-apple', 'Apple Podcasts'], ['xiaoyuzhou', null, '小宇宙'], ['spotify', 'fa-spotify', 'Spotify'], ['youtube_music', 'fa-youtube-play', 'YouTube Music'], ['amazon', null, 'Amazon Music'], ['pocketcasts', null, 'Pocket Casts'], ['overcast', null, 'Overcast'], ['ximalaya', null, '喜马拉雅'], ['netease', null, '网易云音乐'], ['lizhi', null, '荔枝']];
+- var socialLinks = [];
+- if (social.email) socialLinks.push(['mailto:' + social.email, 'fa-envelope', 'Email']);
+- if (social.x) socialLinks.push(['https://x.com/' + social.x, 'fa-twitter', 'X']);
+- if (social.instagram) socialLinks.push(['https://instagram.com/' + social.instagram, 'fa-instagram', 'Instagram']);
+- if (social.weibo) socialLinks.push(['https://weibo.com/' + social.weibo, 'fa-weibo', '微博']);
+- if (social.telegram) socialLinks.push(['https://t.me/' + social.telegram, 'fa-paper-plane', 'Telegram']);
+- if (social.bluesky) socialLinks.push(['https://bsky.app/profile/' + social.bluesky, null, 'Bluesky']);
+- if (social.bilibili) socialLinks.push(['https://space.bilibili.com/' + social.bilibili, null, 'B站']);
+- if (social.wechat_qr) socialLinks.push([url_for(social.wechat_qr), 'fa-wechat', '微信']);
+
+mixin sidebarLink(href, icon, label)
+  li
+    a(class=linkClass, href=href, title=label, aria-label=label)
+      if icon
+        i.fa(class=icon)
+      else
+        = label
+
+.sidebar.animated.fadeInDown(class=linkClass)
   .logo-title
     .title
-      img(src= url_for('images/logo@2x.png') alt="科技聚变 Logo")
+      img(src= url_for(show.logo), alt= show.alt)
       h3(title="")
-        a(href="/")= config.title
-      if theme.description
+        a(class=linkClass, href= url_for(show.home))= show.title
+        if show.subtitle
+          p
+          small= show.subtitle
+      if show.description
         .description
-          p= theme.description
+          p= show.description
 
   ul.social-links
-    if theme.email
-      li
-        a(href="mailto:" + theme.email)
-          i.fa.fa-envelope
-    if theme.twitter
-      li
-        a(href="https://twitter.com/" + theme.twitter)
-          i.fa.fa-twitter
-    if theme.instagram
-      li
-        a(href="http://instagram.com/" + theme.instagram)
-          i.fa.fa-instagram
-    if theme.weibo
-      li
-        a(href="http://weibo.com/" + theme.weibo)
-          i.fa.fa-weibo
-    if theme.iTunes
-      li
-        a(href="https://itunes.apple.com/cn/podcast/id" + theme.iTunes)
-          i.fa.fa-apple
-    if theme.rss
-      li
-        a(href= url_for(theme.rss))
-          i.fa.fa-rss   
+    each s in socialLinks
+      +sidebarLink(s[0], s[1], s[2])
+    each d in podcastLinkDefs
+      if showLinks[d[0]]
+        +sidebarLink(showLinks[d[0]], d[1], d[2])
+    if show.feed
+      +sidebarLink(url_for(show.feed), 'fa-rss', 'RSS')
   include footer

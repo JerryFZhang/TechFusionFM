@@ -1,28 +1,86 @@
-title: 科技聚变（TechFusion）
 keywords: Technology, Tech, China, TechFusionFM, TechFusion, Tech Fusion, 科技播客, 科技, 互联网, IT, 播客, 科技聚变, 聚变, kejijubian, kejijvbian, keji
 author: TechFusionFM.com
-description: "《科技聚变》（TechFusion）是一档科技主题播客节目，我们谈论有关互联网的一切。"
-avatar: "https://scontent.cdninstagram.com/t51.2885-19/s320x320/16229397_1340491162660524_6987457838318616576_a.jpg"
-email: hi@TechFusionFM.com
-twitter: TechFusionFM
-instagram: TechFusionFM
-weibo: TechFusionFM
-iTunes: 1202658654
-rss: podcast.xml
 
-
-spotlight:
-  title: 《聚焦》(《科技聚变》出品）
-  description: 《聚焦》是《科技聚变》的特别节目，我们聊且只聊一件事。您可以访问 TechFusionFM.com 来找到我们，同时您也可以关注我们的 Twitter, Instagram 或微博 @TechFusionFM 。
-  keywords: Technology, Tech, China, TechFusionFM, TechFusion, Tech Fusion, 科技播客, 科技, 互联网, IT, 播客, 科技聚变, 聚变, kejijubian, kejijvbian, keji
-  author: TechFusionFM.com
-  avatar: "https://scontent.cdninstagram.com/t51.2885-19/s320x320/16229397_1340491162660524_6987457838318616576_a.jpg"
+# Shared social / contact links, shown in every sidebar. Leave a value empty
+# to hide it. Handles only (no URL), except email and wechat_qr.
+social:
   email: hi@TechFusionFM.com
-  twitter: TechFusionFM
-  instagram: TechFusionFM
-  weibo: TechFusionFM
-  iTunes: 1202658654
-  rss: podcast.xml
+  x: TechFusionFM            # https://x.com/<handle>
+  weibo: TechFusionFM        # https://weibo.com/<handle>
+  instagram: TechFusionFM    # https://instagram.com/<handle>
+  telegram: TechFusionFM     # https://t.me/<handle>
+  bluesky:                   # https://bsky.app/profile/<handle>, e.g. techfusionfm.com
+  bilibili:                  # numeric space id: https://space.bilibili.com/<id>
+  wechat_qr:                 # image path under source/ or the theme, e.g. images/wechat-qr.png
+
+# One entry per show. The sidebar is picked by page: category pages use
+# page.category, posts use their first spotlight/gadgets category, and
+# everything else uses `podcast`.
+#
+# links: full URLs to the show on each directory/app; empty values are not
+# rendered. Fill these in as the shows are (re)listed.
+# NOTE (2026-11): the Apple Podcasts URLs below currently 404 because Apple
+# delisted the shows. They are kept on purpose; the owner will relist them
+# under the same ids.
+shows:
+  podcast:
+    logo: images/logo@2x.png
+    alt: 科技聚变 Logo
+    title: 科技聚变（TechFusion）
+    subtitle:
+    home: /
+    description: 《科技聚变》（TechFusion）是一档科技主题播客节目，我们谈论有关互联网的一切。
+    feed: /podcast.xml
+    links:
+      apple: https://podcasts.apple.com/podcast/id1202658654
+      xiaoyuzhou:
+      spotify:
+      youtube_music:
+      amazon:
+      pocketcasts:
+      overcast:
+      ximalaya:
+      netease:
+      lizhi:
+  spotlight:
+    logo: images/spotlight.png
+    alt: 聚焦 Logo
+    title: 聚焦
+    subtitle: 《科技聚变》出品
+    home: /categories/spotlight/
+    description: 《聚焦》是《科技聚变》的特别节目，我们聊且只聊一件事。
+    feed: /spotlight.xml
+    links:
+      apple: https://podcasts.apple.com/podcast/id1381044925
+      xiaoyuzhou:
+      spotify:
+      youtube_music:
+      amazon:
+      pocketcasts:
+      overcast:
+      ximalaya:
+      netease:
+      lizhi:
+  gadgets:
+    logo: images/gadgets.png
+    alt: 小玩意儿 Logo
+    title: 小玩意儿
+    subtitle: 《科技聚变》出品
+    home: /categories/gadgets/
+    description: 《小玩意儿》是《科技聚变》的特别节目，我们聊新奇的一切。
+    feed: /gadgets.xml
+    links:
+      apple: https://podcasts.apple.com/podcast/id1381045277
+      xiaoyuzhou:
+      spotify:
+      youtube_music:
+      amazon:
+      pocketcasts:
+      overcast:
+      ximalaya:
+      netease:
+      lizhi:
+
 # Comment
 duoshuo:
 disqus:
