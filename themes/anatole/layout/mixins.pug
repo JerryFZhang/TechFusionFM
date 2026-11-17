@@ -18,10 +18,11 @@ mixin make_post(item, index, is_detail)
 		else
 			.post-content
 				p= strip_html(item.subtitle)
-		.post-footer: .meta
-			.info
-				i.fa.fa-calendar
-				span.date= date(item.date, 'YYYY 年 MM 月 DD 日')
+		if item.layout !== 'page'
+			.post-footer: .meta
+				.info
+					i.fa.fa-calendar
+					span.date= date(item.date, 'YYYY 年 MM 月 DD 日')
 
 
 mixin make_pager()

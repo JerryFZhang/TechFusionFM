@@ -113,6 +113,9 @@ url: https://TechFusionFM.com
 root: /
 permalink: :title/
 permalink_defaults:
+pretty_urls:
+  trailing_index: false # /faq/ rather than /faq/index.html in permalinks and the sitemap
+  trailing_html: true
 
 # Directory
 source_dir: source
