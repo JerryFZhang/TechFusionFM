@@ -1,13 +1,16 @@
 #!/usr/bin/env node
 // Refresh stale boilerplate links in episode posts.
 //
-//   node scripts/refresh-post-links.mjs            # rewrite files in place
-//   node scripts/refresh-post-links.mjs --check    # list what would change, exit 1 if anything
+//   node tools/refresh-post-links.mjs            # rewrite files in place
+//   node tools/refresh-post-links.mjs --check    # list what would change, exit 1 if anything
+//
+// Lives in tools/, not scripts/: Hexo loads every file in scripts/ as a
+// plugin at build time, and this standalone ESM script is not one.
 //
 // Deterministic string replacement over source/_posts/*.md, body only (front
 // matter is never touched). Re-runnable: every rule is idempotent, so a second
-// run changes nothing. The non-episode pages (faq, donate, thanks, 404) are
-// skipped on purpose; they are maintained separately.
+// run changes nothing. The non-episode pages (faq, donate, 404) live outside
+// source/_posts and are maintained by hand; SKIP is kept as a guard.
 //
 // Decisions recorded when the rules were written (2026-11-17, via curl):
 // - 99l.tv answers 500/503 on both http and https, so it is NOT upgraded.
